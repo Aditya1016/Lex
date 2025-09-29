@@ -1,0 +1,5 @@
+fontgen
+*.a
+*.o
+*.bin
+*.ppm
