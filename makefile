@@ -1,5 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11 -pedantic -ggdb $(shell pkg-config --cflags sdl2)
+CFLAGS = -Wall -Wextra -std=c11 -pedantic
+DEBUG_FLAGS = -ggdb
+RELEASE_FLAGS = -O2
+SDL_FLAGS = $(shell pkg-config --cflags sdl2)
 LIBS = $(shell pkg-config --libs sdl2) -lm
 
 # Collect all .c files automatically
@@ -9,7 +12,15 @@ OBJS = $(SRCS:.c=.o)
 # Output executable
 TARGET = te
 
-all: $(TARGET)
+all: debug
+
+# Debug build (default)
+debug: CFLAGS += $(DEBUG_FLAGS) $(SDL_FLAGS)
+debug: $(TARGET)
+
+# Release build (-O2)
+release: CFLAGS += $(RELEASE_FLAGS) $(SDL_FLAGS)
+release: $(TARGET)
 
 # Link object files into the executable
 $(TARGET): $(OBJS)
