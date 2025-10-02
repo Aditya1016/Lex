@@ -188,11 +188,30 @@ void render_cursor(SDL_Renderer *renderer, Font *font)
         render_char(renderer, font, *c, pos, FONT_SCALE);
     }
 }
+
+void usage(FILE* stream)
+{
+    fprintf(stream, "Usage: text_editor [file]\n");
+}
+
 int main(int argc, char *argv[])
 {
+    const char* file_path = NULL;
 
-    (void)argc;
-    (void)argv;
+    if(argc > 1)
+    {
+        file_path = argv[1];
+    } 
+
+    if(file_path)
+    {
+        FILE* f = fopen(file_path, "r");
+        if(f != NULL)
+        {
+            editor_load_from_file(&editor, f);
+            fclose(f);
+        }
+    }
 
     scc(SDL_Init(SDL_INIT_VIDEO));
 
@@ -240,6 +259,11 @@ int main(int argc, char *argv[])
                 case SDLK_RETURN:
                     editor_insert_new_line(&editor);
                     break;
+                case SDLK_F2:
+                    if (file_path){
+                        editor_save_to_file(&editor, file_path);
+                    }
+                    break;
                 }
                 break;
             case SDL_TEXTINPUT:
@@ -254,7 +278,7 @@ int main(int argc, char *argv[])
 
         for(size_t row = 0; row < editor.size; ++row){
             const Line *line = &editor.lines[row];
-            render_text_sized(renderer, &font, line->chars, line->size, vec2f(0, row * FONT_CHAR_HEIGHT * FONT_SCALE), 0xffffffff, FONT_SCALE);
+            render_text_sized(renderer, &font, line->chars, line->size, vec2f(0, (float)row * FONT_CHAR_HEIGHT * FONT_SCALE), 0xffffffff, FONT_SCALE);
         }
         render_cursor(renderer, &font);
 
