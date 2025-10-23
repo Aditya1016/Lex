@@ -3,7 +3,10 @@
 #include <stdbool.h>
 #include <math.h>
 #include <string.h>
+#define GLEW_STATIC
+#include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -214,6 +217,72 @@ void usage(FILE *stream)
     fprintf(stream, "Usage: text_editor [file]\n");
 }
 
+#define OPENGL_RENDERER
+
+#ifdef OPENGL_RENDERER
+void MessageCallback(GLenum source,
+                     GLenum type,
+                     GLuint id,
+                     GLenum severity,
+                     GLsizei length,
+                     const GLchar* message,
+                     const void* userParam)
+{
+    (void) source;
+    (void) id;
+    (void) length;
+    (void) userParam;
+    fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+            (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+            type, severity, message);
+}
+
+int main(int argc, char **argv)
+{
+
+    (void)argc;
+    (void)argv;
+
+    scc(SDL_Init(SDL_INIT_VIDEO));
+
+    SDL_Window *window = (SDL_Window *)scp(SDL_CreateWindow("Text Editor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL));
+
+    {
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+        int major;
+        int minor;
+        scc(SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major));
+        scc(SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor));
+
+        printf("GL Version %d.%d", major, minor);
+    }
+
+    scp(SDL_GL_CreateContext(window));
+
+    GLenum err = glewInit();
+
+    if (GLEW_OK != err)
+    {
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+        exit(1);
+    }
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    if(GLEW_ARB_debug_output){
+        glEnable(GL_DEBUG_OUTPUT);
+        glDebugMessageCallback(MessageCallback, 0);
+    } else {
+        fprintf(stderr, "WARNING! GLEW_ARB_debug_output is not available");
+    }
+
+    return 0;
+}
+#else
 int main(int argc, char *argv[])
 {
     const char *file_path = NULL;
@@ -327,3 +396,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+#endif
