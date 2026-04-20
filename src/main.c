@@ -11,6 +11,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "gl_extra.h"
 #include "la.h"
 #include "editor.h"
 
@@ -248,9 +249,9 @@ int main(int argc, char **argv)
     SDL_Window *window = (SDL_Window *)scp(SDL_CreateWindow("Text Editor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL));
 
     {
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        scc(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3));
+        scc(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3));
+        scc(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE));
 
         int major;
         int minor;
@@ -280,6 +281,17 @@ int main(int argc, char **argv)
         fprintf(stderr, "WARNING! GLEW_ARB_debug_output is not available");
     }
 
+    GLuint vert_shader = 0;
+    if (compile_shader_file("./shaders/font.vert", GL_VERTEX_SHADER, &vert_shader) == false) {
+        printf("Exiting");
+        exit(1);
+    }
+
+    GLuint frag_shader = 0;
+    if (compile_shader_file("../shaders/font.frag", GL_FRAGMENT_SHADER, &frag_shader) == false) {
+        printf("Exiting");
+        exit(1);
+    }
     return 0;
 }
 #else

@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/C_programming/text_editor/src",
-      "program": "d:/C_programming/text_editor/src/build/Debug/outDebug",
+      "cwd": "d:/C_programming/text_editor",
+      "program": "d:/C_programming/text_editor/te.exe",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
