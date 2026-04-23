@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <string.h>
+#include <errno.h>
 #include "file.h"
 
 char *slurp_file_into_malloced_cstr(const char *file_path)

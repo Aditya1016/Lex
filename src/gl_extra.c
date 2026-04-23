@@ -7,9 +7,7 @@
 #include <errno.h>
 #include <math.h>
 
-#define GLFW_INCLUDE_GLEXT
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 #include "file.h"
 #include "gl_extra.h"
